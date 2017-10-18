@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
-// import Genre from './GenreSchema'
-//
+import Salesman from './SalesmanSchema'
+
 var ProductsSchema = mongoose.Schema({
-  // genreId:{type:mongoose.Schema.Types.ObjectId,ref:'Genre'},
+  SalesmanId:{type:mongoose.Schema.Types.ObjectId,ref:'Salesman'},
   productName:{type:String,
              required:true
           },

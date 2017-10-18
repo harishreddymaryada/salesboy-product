@@ -1,5 +1,5 @@
 import Salesman from '../models/SalesmanSchema'
-// import Book from '../models/BookSchema'
+import Products from '../models/ProductsSchema'
 
 
 export const getAllSalesmanList = (req,res,next) => {
@@ -43,14 +43,10 @@ export const createOneSalesman = (req,res,next) => {
 
 export const getOneSalesman = (req,res,next) => {
   var id = req.params.sid
-  Salesman.findById(id).exec((err,result)=>{
-    if(err){
-      res.json({'success':false})
-      next(err)
-    }
-      res.json({result})
-      next()
-  })
+   Salesman.findById(id).then(function(result){
+         res.json({result})
+         next()
+   })
 }
 
 export const getOneSalesmanAndRemove = (req,res,next) =>{
@@ -80,6 +76,20 @@ export const getOneSalesmanAndUpdate = (req,res,next) =>{
 }
 
 
-// export const createOneBook = (req,res) =>{
+// export const getSalesmanProducts = (req,res,next) =>{
+//   var id = req.params.sid
+//   Salesman.findById(id).exec((err,result) =>{
+//         if(err){
+//           res.json({'success':false})
+//           next(err)
+//         }
+//         Salesman.find({products:id}).exec((err,results) =>{
+//           if(err){
+//             res.json({'success':false})
+//             next(err)
+//           }
+//           res.json({results})
+//         })
 //
+//   })
 // }
