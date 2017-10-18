@@ -1,37 +1,51 @@
-const express = require('express')
-const logger = require('morgan')
+import express from 'express'
+import path from 'path'
+import bodyParser from 'body-parser'
+import logger from 'morgan'
+import mongoose from 'mongoose'
+import bb from 'express-busboy'
+
+import salesmanrouter from './routes/SalesmanRoute'
+import productsrouter from './routes/ProductsRoute'
+
+import SourceMapSupport from 'source-map-support'
+
+//mongoose
+const dbURL ='mongodb://localhost/rest_api_44'
+mongoose.connect(dbURL,(err) =>{
+  if(!err){
+    console.log(`DB connected`)
+  }
+  else{
+    console.log(`DB not connected`);
+  }
+})
+
+
+SourceMapSupport.install()
 
 const app = express()
-
-
-// middlewares
-
-app.use(logger('dev'))
-
-//Routes
-app.get('/',(req,res,next)=>{
-  res.status(200).json({message:'Working'})
+// express-busboy
+bb.extend(app)
+// allow-cors
+app.use(function(req,res,next){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
 })
+// configure app
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended:true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// catch 404 errors
-app.use((req,res,next) =>{
-  const err = new Error('Not Found')
-  err.status=404
-  next(err)
-})
-//error handlers
-app.use((req,res,next)=>{
-  const error = app.get('env') === 'development'?err:{}
-  const status = err.status || 500
 
-  res.status(status).json({error:{
-    message:error.message
-  }})
-  console.log(err)
-})
-// start the server
+// routes
+app.use('/products',productsrouter)
+app.use('/salesman',salesmanrouter)
+// set the port
+const port = process.env.PORT || 7777;
 
-const port = app.get('port')||7777
-app.listen(port,()=>{
-  console.log(`server is listening on port ${port}`);
+app.listen(port,() =>{
+  console.log(`Server Running on Port ${port}`);
 })
